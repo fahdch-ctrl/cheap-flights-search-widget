@@ -5,12 +5,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheap Flights Search Engine</title>
+    <style></style>
 </head>
 
 <body>
-    <script async
+    <script
         src="https://tpwgt.com/content?trs=378994&shmarker=597550&locale=en&curr=USD&powered_by=true&border_radius=0&plain=true&color_button=%232681ff&color_button_text=%23ffffff&color_border=%232681ff&promo_id=4132&campaign_id=121"
         charset="utf-8"></script>
+
+    <script>
+        function removeFromShadowRoots(root = document) {
+            const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
+
+            while (treeWalker.nextNode()) {
+                const el = treeWalker.currentNode;
+
+                // Check if the element has a shadow root
+                if (el.shadowRoot) {
+                    const inner = el.shadowRoot.querySelector('.tp_powered_by');
+                    if (inner) {
+                        inner.remove();
+                        console.log("✅ Removed .tp_powered_by from shadow root");
+                    } else {
+                        // Recurse into this shadow root
+                        removeFromShadowRoots(el.shadowRoot);
+                    }
+                }
+            }
+        }
+
+        setTimeout(() => {
+            removeFromShadowRoots();
+        }, 1000); // Delay to ensure widget loads
+
+    </script>
+
 </body>
 
 </html>
