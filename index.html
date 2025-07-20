@@ -14,31 +14,42 @@
         charset="utf-8"></script>
 
     <script>
+    let attempts = 0;
+    const maxAttempts = 50; // 100 × 100ms = 10 seconds max
+
+    const interval = setInterval(() => {
+        let removed = false;
+
         function removeFromShadowRoots(root = document) {
             const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
 
             while (treeWalker.nextNode()) {
                 const el = treeWalker.currentNode;
 
-                // Check if the element has a shadow root
                 if (el.shadowRoot) {
-                    const inner = el.shadowRoot.querySelector('.tp_powered_by');
-                    if (inner) {
-                        inner.remove();
+                    const target = el.shadowRoot.querySelector('.tp_powered_by');
+                    if (target) {
+                        target.remove();
                         console.log("✅ Removed .tp_powered_by from shadow root");
+                        removed = true;
+                        return; // stop deeper recursion once found
                     } else {
-                        // Recurse into this shadow root
-                        removeFromShadowRoots(el.shadowRoot);
+                        removeFromShadowRoots(el.shadowRoot); // recurse
                     }
                 }
             }
         }
 
-        setTimeout(() => {
-            removeFromShadowRoots();
-        }, 100); // Delay to ensure widget loads
+        removeFromShadowRoots();
 
-    </script>
+        if (removed || ++attempts >= maxAttempts) {
+            clearInterval(interval);
+            if (!removed) {
+                console.warn("⚠️ .tp_powered_by not found after 10 seconds.");
+            }
+        }
+    }, 100);
+</script>
 
 </body>
 
